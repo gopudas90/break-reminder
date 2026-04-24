@@ -400,7 +400,7 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration:  false,
     },
-    title:           'Break Reminder',
+    title:           'Pausely',
     show:            false,
     backgroundColor: '#f5f6fa',
     icon:            fs.existsSync(ICON_PATH) ? ICON_PATH : undefined,
@@ -430,7 +430,7 @@ function createTray() {
   }
 
   tray = new Tray(icon);
-  tray.setToolTip('Break Reminder');
+  tray.setToolTip('Pausely');
 
   const menu = Menu.buildFromTemplate([
     { label: 'Open', click: () => { mainWindow?.show(); mainWindow?.focus(); } },

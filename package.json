@@ -1,7 +1,7 @@
 {
-  "name": "break-reminder",
+  "name": "pausely",
   "version": "1.0.0",
-  "description": "Stay healthy with break, water, and screen time reminders",
+  "description": "Pausely — gentle reminders for breaks, water, and screen time",
   "main": "main.js",
   "author": "Gopu <hello@gopu.work>",
   "scripts": {
@@ -14,8 +14,11 @@
     "dist": "npm run build && electron-builder --win --mac --x64"
   },
   "build": {
-    "appId": "work.gopu.break-reminder",
-    "productName": "Break Reminder",
+    "appId": "work.gopu.pausely",
+    "productName": "Pausely",
+    "compression": "maximum",
+    "asar": true,
+    "removePackageScripts": true,
     "win": {
       "target": "nsis",
       "icon": "assets/icon.png"
@@ -24,7 +27,8 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
+      "createStartMenuShortcut": true,
+      "shortcutName": "Pausely"
     },
     "mac": {
       "target": [
@@ -34,7 +38,7 @@
       "category": "public.app-category.productivity"
     },
     "dmg": {
-      "title": "Break Reminder"
+      "title": "Pausely"
     },
     "files": [
       "dist/**/*",
@@ -42,7 +46,16 @@
       "main.js",
       "preload.js",
       "preload-notif.js",
-      "preload-modal.js"
+      "preload-modal.js",
+      "!**/*.md",
+      "!**/*.map",
+      "!**/LICENSE*",
+      "!**/license*",
+      "!**/test/**",
+      "!**/tests/**",
+      "!**/__tests__/**",
+      "!**/*.d.ts",
+      "!**/.bin/**"
     ],
     "directories": {
       "output": "release"
