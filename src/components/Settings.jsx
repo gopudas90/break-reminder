@@ -6,7 +6,6 @@ import {
   Button,
   Card,
   Typography,
-  Space,
   message,
   Skeleton,
 } from 'antd';
@@ -19,7 +18,75 @@ import {
 
 const { Text } = Typography;
 
+const FG     = '#ffffff';
+const FG_DIM = '#888888';
+const BORDER = '#333333';
+
+const MONO_LABEL = {
+  fontFamily: "'JetBrains Mono', 'Consolas', monospace",
+  fontSize: 12,
+  fontWeight: 500,
+  color: FG,
+  letterSpacing: '0.18em',
+  textTransform: 'uppercase',
+  display: 'block',
+};
+
+const SUB_TEXT = { fontSize: 11, color: FG_DIM, fontWeight: 300, letterSpacing: '0.04em' };
+
 // ─── Settings ─────────────────────────────────────────────────────────────────
+
+function ReminderSection({ icon, name, title, subtitle, valueKey, addonAfter, max }) {
+  return (
+    <Card
+      style={{
+        background: '#0d0d0d',
+        border: `1px solid ${BORDER}`,
+        marginBottom: 14,
+      }}
+      styles={{ body: { padding: '20px 24px' } }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <span
+            style={{
+              width: 36,
+              height: 36,
+              border: `1px solid ${BORDER}`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 16,
+              color: FG,
+            }}
+          >
+            {icon}
+          </span>
+          <div>
+            <Text style={MONO_LABEL}>{title}</Text>
+            <Text style={SUB_TEXT}>{subtitle}</Text>
+          </div>
+        </div>
+        <Form.Item name={[name, 'enabled']} valuePropName="checked" noStyle>
+          <Switch size="small" />
+        </Form.Item>
+      </div>
+      <Form.Item
+        label={valueKey === 'threshold' ? 'Alert After' : 'Every'}
+        name={[name, valueKey]}
+        rules={[{ required: true, type: 'number', min: 1, max }]}
+        style={{ marginBottom: 0 }}
+      >
+        <InputNumber
+          min={1}
+          max={max}
+          addonAfter={addonAfter}
+          style={{ width: 180 }}
+        />
+      </Form.Item>
+    </Card>
+  );
+}
 
 export default function Settings({ settings, onSave }) {
   const [form] = Form.useForm();
@@ -36,23 +103,39 @@ export default function Settings({ settings, onSave }) {
   const handleFinish = async (values) => {
     await onSave(values);
     setHasChanges(false);
-    messageApi.success({
-      content: 'Settings saved. Timers have been reset.',
-      duration: 2.5,
-    });
+    messageApi.success({ content: 'Settings saved · Timers reset', duration: 2.5 });
   };
 
   if (!settings) {
     return (
-      <div style={{ paddingTop: 20 }}>
+      <div style={{ paddingTop: 24 }}>
         <Skeleton active paragraph={{ rows: 6 }} />
       </div>
     );
   }
 
   return (
-    <div style={{ paddingTop: 20, maxWidth: 560 }}>
+    <div style={{ paddingTop: 24, maxWidth: 620 }}>
       {contextHolder}
+
+      <div style={{ marginBottom: 22 }}>
+        <Text
+          style={{
+            fontFamily: "'JetBrains Mono', 'Consolas', monospace",
+            fontSize: 11,
+            letterSpacing: '0.24em',
+            color: FG_DIM,
+            textTransform: 'uppercase',
+            display: 'block',
+            marginBottom: 4,
+          }}
+        >
+          // Configuration
+        </Text>
+        <Text style={{ fontSize: 26, fontWeight: 700, color: FG, letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
+          Settings
+        </Text>
+      </div>
 
       <Form
         form={form}
@@ -62,122 +145,58 @@ export default function Settings({ settings, onSave }) {
         onValuesChange={() => setHasChanges(true)}
         initialValues={settings}
       >
-        {/* Break Reminder */}
-        <Card
-          style={{ borderRadius: 12, border: '1px solid #f0f0f0', boxShadow: '0 1px 4px rgba(0,0,0,0.05)', marginBottom: 14 }}
-          styles={{ body: { padding: '18px 22px' } }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-            <Space align="center" size={10}>
-              <span style={{ width: 34, height: 34, borderRadius: 8, background: '#f9731618', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, color: '#f97316' }}>
-                <CoffeeOutlined />
-              </span>
-              <div>
-                <Text style={{ fontSize: 14, fontWeight: 600, color: '#111827', display: 'block' }}>Break Reminder</Text>
-                <Text style={{ fontSize: 13, color: '#6b7280' }}>Remind you to stand up and stretch</Text>
-              </div>
-            </Space>
-            <Form.Item name={['break', 'enabled']} valuePropName="checked" noStyle>
-              <Switch size="small" />
-            </Form.Item>
-          </div>
-          <Form.Item
-            label={<Text style={{ fontSize: 13 }}>Every</Text>}
-            name={['break', 'interval']}
-            rules={[{ required: true, type: 'number', min: 1, max: 480 }]}
-            style={{ marginBottom: 0 }}
-          >
-            <InputNumber
-              min={1}
-              max={480}
-              addonAfter="minutes"
-              style={{ width: 160 }}
-            />
-          </Form.Item>
-        </Card>
+        <ReminderSection
+          icon={<CoffeeOutlined />}
+          name="break"
+          title="Break"
+          subtitle="Stand up and stretch"
+          valueKey="interval"
+          addonAfter="MIN"
+          max={480}
+        />
 
-        {/* Water Reminder */}
-        <Card
-          style={{ borderRadius: 12, border: '1px solid #f0f0f0', boxShadow: '0 1px 4px rgba(0,0,0,0.05)', marginBottom: 14 }}
-          styles={{ body: { padding: '18px 22px' } }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-            <Space align="center" size={10}>
-              <span style={{ width: 34, height: 34, borderRadius: 8, background: '#0ea5e918', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, color: '#0ea5e9' }}>
-                <ExperimentOutlined />
-              </span>
-              <div>
-                <Text style={{ fontSize: 14, fontWeight: 600, color: '#111827', display: 'block' }}>Water Reminder</Text>
-                <Text style={{ fontSize: 13, color: '#6b7280' }}>Keep yourself hydrated throughout the day</Text>
-              </div>
-            </Space>
-            <Form.Item name={['water', 'enabled']} valuePropName="checked" noStyle>
-              <Switch size="small" />
-            </Form.Item>
-          </div>
-          <Form.Item
-            label={<Text style={{ fontSize: 13 }}>Every</Text>}
-            name={['water', 'interval']}
-            rules={[{ required: true, type: 'number', min: 1, max: 480 }]}
-            style={{ marginBottom: 0 }}
-          >
-            <InputNumber
-              min={1}
-              max={480}
-              addonAfter="minutes"
-              style={{ width: 160 }}
-            />
-          </Form.Item>
-        </Card>
+        <ReminderSection
+          icon={<ExperimentOutlined />}
+          name="water"
+          title="Water"
+          subtitle="Stay hydrated"
+          valueKey="interval"
+          addonAfter="MIN"
+          max={480}
+        />
 
-        {/* Screen Time */}
-        <Card
-          style={{ borderRadius: 12, border: '1px solid #f0f0f0', boxShadow: '0 1px 4px rgba(0,0,0,0.05)', marginBottom: 24 }}
-          styles={{ body: { padding: '18px 22px' } }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-            <Space align="center" size={10}>
-              <span style={{ width: 34, height: 34, borderRadius: 8, background: '#8b5cf618', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, color: '#8b5cf6' }}>
-                <DesktopOutlined />
-              </span>
-              <div>
-                <Text style={{ fontSize: 14, fontWeight: 600, color: '#111827', display: 'block' }}>Screen Break</Text>
-                <Text style={{ fontSize: 13, color: '#6b7280' }}>Take a short break after set time</Text>
-              </div>
-            </Space>
-            <Form.Item name={['screenTime', 'enabled']} valuePropName="checked" noStyle>
-              <Switch size="small" />
-            </Form.Item>
-          </div>
-          <Form.Item
-            label={<Text style={{ fontSize: 13 }}>Alert after</Text>}
-            name={['screenTime', 'threshold']}
-            rules={[{ required: true, type: 'number', min: 1, max: 1440 }]}
-            style={{ marginBottom: 0 }}
-          >
-            <InputNumber
-              min={1}
-              max={1440}
-              addonAfter="minutes"
-              style={{ width: 160 }}
-            />
-          </Form.Item>
-        </Card>
+        <ReminderSection
+          icon={<DesktopOutlined />}
+          name="screenTime"
+          title="Screen Break"
+          subtitle="Take a short break after set time"
+          valueKey="threshold"
+          addonAfter="MIN"
+          max={1440}
+        />
 
-        <Form.Item>
+        <Form.Item style={{ marginTop: 24, marginBottom: 14 }}>
           <Button
             type="primary"
             htmlType="submit"
             icon={<SaveOutlined />}
             disabled={!hasChanges}
-            style={{ fontSize: 14, height: 38, paddingInline: 24, borderRadius: 8 }}
+            style={{ height: 40, paddingInline: 28 }}
           >
             Save Settings
           </Button>
         </Form.Item>
 
-        <Text style={{ fontSize: 13, color: '#9ca3af' }}>
-          Saving resets all active timers to their new intervals.
+        <Text
+          style={{
+            fontFamily: "'JetBrains Mono', 'Consolas', monospace",
+            fontSize: 10,
+            color: FG_DIM,
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase',
+          }}
+        >
+          → Saving resets all active timers to their new intervals
         </Text>
       </Form>
     </div>

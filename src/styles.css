@@ -1,3 +1,19 @@
+/* ─── Nothing-inspired design system ─────────────────────────────────────── */
+
+:root {
+  --bg-0:        #000000;
+  --bg-1:        #0a0a0a;
+  --bg-2:        #141414;
+  --bg-3:        #1a1a1a;
+  --border:      #333333;
+  --border-soft: #222222;
+  --fg:          #ffffff;
+  --fg-dim:      #888888;
+  --fg-faint:    #555555;
+  --accent:      #ff0000;
+  --mono: 'JetBrains Mono', 'SF Mono', 'Consolas', 'Courier New', monospace;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -6,30 +22,30 @@ html, body, #root {
   margin: 0;
   padding: 0;
   height: 100%;
-  background: #f5f6fa;
+  background: var(--bg-0);
+  color: var(--fg);
 }
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 14px;
+  font-weight: 300;
   -webkit-font-smoothing: antialiased;
+  background-color: var(--bg-0);
+  background-image: radial-gradient(circle, #1f1f1f 1px, transparent 1px);
+  background-size: 14px 14px;
+  background-position: 0 0;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #d0d5dd;
-  border-radius: 3px;
-}
+/* ── Scrollbar ────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar          { width: 6px; height: 6px; }
+::-webkit-scrollbar-track    { background: transparent; }
+::-webkit-scrollbar-thumb    { background: var(--border); border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: var(--fg-faint); }
 
-/* Antd overrides */
+/* ── AntD overrides ───────────────────────────────────────────────────────── */
 .ant-layout {
-  background: #f5f6fa;
+  background: transparent !important;
 }
 
 .ant-tabs-nav {
@@ -37,5 +53,256 @@ body {
   position: sticky !important;
   top: 0 !important;
   z-index: 10 !important;
-  background: #f5f6fa !important;
+  background: rgba(0,0,0,0.85) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border) !important;
 }
+
+.ant-tabs-nav::before {
+  border-bottom: none !important;
+}
+
+.ant-tabs-tab {
+  padding: 14px 4px !important;
+  margin: 0 28px 0 0 !important;
+  font-family: var(--mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  color: var(--fg-dim) !important;
+  font-weight: 400 !important;
+}
+
+.ant-tabs-tab:hover .ant-tabs-tab-btn {
+  color: var(--fg) !important;
+}
+
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--fg) !important;
+  font-weight: 500 !important;
+}
+
+.ant-tabs-ink-bar {
+  background: var(--fg) !important;
+  height: 1px !important;
+}
+
+/* InputNumber */
+.ant-input-number,
+.ant-input-number-group-wrapper,
+.ant-input-number-group-addon,
+.ant-input-number-input {
+  background: var(--bg-2) !important;
+  border-color: var(--border) !important;
+  color: var(--fg) !important;
+  border-radius: 0 !important;
+  font-family: var(--mono) !important;
+}
+
+.ant-input-number-group-addon {
+  color: var(--fg-dim) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+}
+
+.ant-input-number-handler-wrap {
+  background: var(--bg-3) !important;
+  border-left: 1px solid var(--border) !important;
+}
+
+.ant-input-number-handler {
+  border-color: var(--border) !important;
+}
+
+.ant-input-number-handler-up-inner,
+.ant-input-number-handler-down-inner {
+  color: var(--fg-dim) !important;
+}
+
+.ant-input-number-focused,
+.ant-input-number:hover {
+  border-color: var(--fg) !important;
+  box-shadow: none !important;
+}
+
+/* Switch — sharp rectangular track + sharp square handle */
+.ant-switch {
+  background: var(--bg-3) !important;
+  border-radius: 0 !important;
+  box-shadow: inset 0 0 0 1px var(--border) !important;
+  min-width: 38px !important;
+  height: 18px !important;
+  line-height: 18px !important;
+}
+
+.ant-switch.ant-switch-small {
+  min-width: 38px !important;
+  height: 18px !important;
+  line-height: 18px !important;
+}
+
+.ant-switch.ant-switch-checked {
+  background: var(--accent) !important;
+  box-shadow: inset 0 0 0 1px var(--accent) !important;
+}
+
+.ant-switch:hover:not(.ant-switch-disabled) {
+  background: var(--bg-3) !important;
+  box-shadow: inset 0 0 0 1px var(--fg-dim) !important;
+}
+
+.ant-switch.ant-switch-checked:hover:not(.ant-switch-disabled) {
+  background: var(--accent) !important;
+  box-shadow: inset 0 0 0 1px var(--accent) !important;
+}
+
+.ant-switch .ant-switch-handle {
+  border-radius: 0 !important;
+  width: 12px !important;
+  height: 12px !important;
+  top: 3px !important;
+  inset-inline-start: 3px !important;
+}
+
+.ant-switch.ant-switch-checked .ant-switch-handle {
+  inset-inline-start: calc(100% - 12px - 3px) !important;
+}
+
+.ant-switch .ant-switch-handle::before {
+  background: var(--fg) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.ant-switch.ant-switch-checked .ant-switch-handle::before {
+  background: var(--fg) !important;
+}
+
+.ant-switch .ant-switch-inner {
+  padding: 0 !important;
+}
+
+/* Buttons (outlined Nothing style) */
+.ant-btn {
+  border-radius: 0 !important;
+  font-family: var(--mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+  font-weight: 500 !important;
+  background: transparent !important;
+  border: 1px solid var(--fg) !important;
+  color: var(--fg) !important;
+  transition: background 0.15s, color 0.15s !important;
+  box-shadow: none !important;
+}
+
+.ant-btn:hover:not(:disabled) {
+  background: var(--fg) !important;
+  color: var(--bg-0) !important;
+  border-color: var(--fg) !important;
+}
+
+.ant-btn-primary {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: var(--fg) !important;
+}
+
+.ant-btn-primary:hover:not(:disabled) {
+  background: var(--fg) !important;
+  border-color: var(--fg) !important;
+  color: var(--bg-0) !important;
+}
+
+.ant-btn:disabled,
+.ant-btn[disabled] {
+  background: transparent !important;
+  border-color: var(--border) !important;
+  color: var(--fg-faint) !important;
+  cursor: not-allowed !important;
+}
+
+.ant-btn-sm {
+  font-size: 10px !important;
+  padding: 0 12px !important;
+  height: 28px !important;
+}
+
+/* Card */
+.ant-card {
+  background: var(--bg-2) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  color: var(--fg) !important;
+}
+
+.ant-card-body {
+  background: transparent !important;
+  color: var(--fg) !important;
+}
+
+/* Form labels */
+.ant-form-item-label > label {
+  color: var(--fg-dim) !important;
+  font-family: var(--mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+}
+
+/* Tooltip */
+.ant-tooltip-inner {
+  background: var(--bg-3) !important;
+  color: var(--fg) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  font-family: var(--mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+}
+
+.ant-tooltip-arrow::before {
+  background: var(--bg-3) !important;
+}
+
+/* Progress (circle) */
+.ant-progress-circle .ant-progress-text {
+  color: var(--fg) !important;
+}
+
+/* Skeleton */
+.ant-skeleton-content .ant-skeleton-title,
+.ant-skeleton-content .ant-skeleton-paragraph > li {
+  background: linear-gradient(90deg, var(--bg-2) 25%, var(--bg-3) 37%, var(--bg-2) 63%) !important;
+}
+
+/* Message (toast) */
+.ant-message-notice-content {
+  background: var(--bg-3) !important;
+  color: var(--fg) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  font-family: var(--mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  box-shadow: none !important;
+}
+
+.ant-message-success .anticon {
+  color: var(--accent) !important;
+}
+
+/* Selection */
+::selection {
+  background: var(--accent);
+  color: var(--fg);
+}
+
+/* Utility classes */
+.mono   { font-family: var(--mono); }
+.upper  { text-transform: uppercase; letter-spacing: 0.16em; }

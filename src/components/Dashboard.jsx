@@ -1,14 +1,20 @@
 import React from 'react';
-import { Row, Col, Card, Progress, Typography, Button, Tooltip, Skeleton, Tag } from 'antd';
+import { Row, Col, Card, Typography, Button, Tooltip, Skeleton } from 'antd';
 import {
   CoffeeOutlined,
   ExperimentOutlined,
   DesktopOutlined,
   ReloadOutlined,
-  PauseCircleOutlined,
 } from '@ant-design/icons';
+import DotClock from './DotClock';
 
 const { Text } = Typography;
+
+const ACCENT  = '#ff0000';
+const FG      = '#ffffff';
+const FG_DIM  = '#888888';
+const BORDER  = '#333333';
+const TRAIL   = '#1a1a1a';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -31,114 +37,102 @@ function formatElapsed(seconds) {
   return `${m}m`;
 }
 
+// ─── Status pill ──────────────────────────────────────────────────────────────
+
+function StatusPill({ enabled, stopped }) {
+  let label = 'ACTIVE';
+  let color = FG;
+  if (!enabled) { label = 'OFF';     color = FG_DIM; }
+  else if (stopped) { label = 'STOPPED'; color = ACCENT; }
+
+  return (
+    <span
+      style={{
+        fontFamily: "'JetBrains Mono', 'Consolas', monospace",
+        fontSize: 10,
+        letterSpacing: '0.16em',
+        color,
+        border: `1px solid ${color}`,
+        padding: '3px 8px',
+        textTransform: 'uppercase',
+      }}
+    >
+      ● {label}
+    </span>
+  );
+}
+
 // ─── ReminderCard ─────────────────────────────────────────────────────────────
 
 function ReminderCard({
   icon,
   label,
   description,
-  color,
   percent,
   countdown,
   enabled,
   stopped,
   onReset,
 }) {
-  const isRunning = enabled && !stopped;
-
-  let statusTag;
-  if (!enabled) {
-    statusTag = (
-      <Tag color="default" style={{ fontSize: 12, fontWeight: 500, border: 'none', borderRadius: 6 }}>
-        OFF
-      </Tag>
-    );
-  } else if (stopped) {
-    statusTag = (
-      <Tag
-        icon={<PauseCircleOutlined />}
-        style={{
-          fontSize: 12,
-          fontWeight: 500,
-          border: 'none',
-          borderRadius: 6,
-          background: '#fef3c7',
-          color: '#d97706',
-        }}
-      >
-        Stopped
-      </Tag>
-    );
-  } else {
-    statusTag = (
-      <Tag color="green" style={{ fontSize: 12, fontWeight: 500, border: 'none', borderRadius: 6 }}>
-        ON
-      </Tag>
-    );
-  }
+  const ringColor = stopped ? ACCENT : (enabled ? FG : '#333333');
 
   return (
     <Card
       style={{
-        borderRadius: 12,
-        boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
-        border: stopped ? `1px solid ${color}44` : '1px solid #f0f0f0',
+        border: `1px solid ${stopped ? ACCENT : BORDER}`,
+        background: '#0d0d0d',
         height: '100%',
-        transition: 'border-color 0.3s',
       }}
-      styles={{ body: { padding: 24 } }}
+      styles={{ body: { padding: 22 } }}
     >
       {/* Header row */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <span
             style={{
-              width: 34,
-              height: 34,
-              borderRadius: 8,
-              background: `${color}18`,
+              width: 36,
+              height: 36,
+              border: `1px solid ${BORDER}`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: 18,
-              color,
+              fontSize: 16,
+              color: FG,
             }}
           >
             {icon}
           </span>
           <div>
-            <Text style={{ fontSize: 14, fontWeight: 600, display: 'block', color: '#111827' }}>
+            <Text
+              style={{
+                fontSize: 12,
+                fontWeight: 500,
+                display: 'block',
+                color: FG,
+                fontFamily: "'JetBrains Mono', 'Consolas', monospace",
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+              }}
+            >
               {label}
             </Text>
-            <Text style={{ fontSize: 12, color: '#9ca3af' }}>{description}</Text>
+            <Text style={{ fontSize: 11, color: FG_DIM, fontWeight: 300, letterSpacing: '0.04em' }}>
+              {description}
+            </Text>
           </div>
         </div>
-        {statusTag}
+        <StatusPill enabled={enabled} stopped={stopped} />
       </div>
 
-      {/* Progress circle */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-        <Progress
-          type="circle"
-          percent={enabled ? Math.min(100, percent) : 0}
-          strokeColor={stopped ? `${color}88` : (enabled ? color : '#d9d9d9')}
-          trailColor="#f3f4f6"
-          size={110}
-          format={() => (
-            <div style={{ textAlign: 'center' }}>
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: 600,
-                  color: stopped ? '#9ca3af' : (enabled ? '#111827' : '#9ca3af'),
-                  letterSpacing: '-0.5px',
-                  fontVariantNumeric: 'tabular-nums',
-                }}
-              >
-                {countdown}
-              </Text>
-            </div>
-          )}
+      {/* Dot-matrix clock */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18 }}>
+        <DotClock
+          percent={percent}
+          value={countdown}
+          label={stopped ? 'STOPPED' : (enabled ? 'REMAINING' : 'OFF')}
+          enabled={enabled}
+          stopped={stopped}
+          size={150}
         />
 
         <Tooltip title={stopped ? 'Restart timer' : 'Reset timer'}>
@@ -147,12 +141,6 @@ function ReminderCard({
             icon={<ReloadOutlined />}
             onClick={onReset}
             disabled={!enabled}
-            type={stopped ? 'primary' : 'default'}
-            style={{
-              fontSize: 13,
-              borderRadius: 6,
-              ...(stopped ? { background: color, borderColor: color } : {}),
-            }}
           >
             {stopped ? 'Restart' : 'Reset'}
           </Button>
@@ -167,13 +155,11 @@ function ReminderCard({
 export default function Dashboard({ timerState, onReset }) {
   if (!timerState) {
     return (
-      <div style={{ padding: '20px 0' }}>
-        <Row gutter={[20, 20]}>
+      <div style={{ padding: '24px 0' }}>
+        <Row gutter={[16, 16]}>
           {[0, 1, 2].map((i) => (
             <Col key={i} xs={24} sm={12} lg={8}>
-              <Card style={{ borderRadius: 12 }}>
-                <Skeleton active />
-              </Card>
+              <Card><Skeleton active /></Card>
             </Col>
           ))}
         </Row>
@@ -196,41 +182,87 @@ export default function Dashboard({ timerState, onReset }) {
     : 0;
 
   return (
-    <div style={{ paddingTop: 20 }}>
+    <div style={{ paddingTop: 24 }}>
+      {/* Page heading */}
+      <div style={{ marginBottom: 22, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+        <div>
+          <Text
+            style={{
+              fontFamily: "'JetBrains Mono', 'Consolas', monospace",
+              fontSize: 11,
+              letterSpacing: '0.24em',
+              color: FG_DIM,
+              textTransform: 'uppercase',
+              display: 'block',
+              marginBottom: 4,
+            }}
+          >
+            // System Status
+          </Text>
+          <Text style={{ fontSize: 26, fontWeight: 700, color: FG, letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
+            Pausely
+          </Text>
+        </div>
+        <Text
+          style={{
+            fontFamily: "'JetBrains Mono', 'Consolas', monospace",
+            fontSize: 10,
+            color: FG_DIM,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+          }}
+        >
+          v1.0.0 · ONLINE
+        </Text>
+      </div>
+
       {/* Screen time summary bar */}
       {screenTime.enabled && (
         <div
           style={{
-            background: '#ffffff',
-            border: '1px solid #f0f0f0',
-            borderRadius: 10,
-            padding: '12px 18px',
-            marginBottom: 20,
+            background: '#0d0d0d',
+            border: `1px solid ${BORDER}`,
+            padding: '14px 20px',
+            marginBottom: 18,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
-          <Text style={{ fontSize: 13, color: '#6b7280' }}>
-            Screen time this session
+          <Text
+            style={{
+              fontSize: 11,
+              color: FG_DIM,
+              fontFamily: "'JetBrains Mono', 'Consolas', monospace",
+              letterSpacing: '0.16em',
+              textTransform: 'uppercase',
+            }}
+          >
+            Screen Time / Session
           </Text>
-          <Text style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>
+          <Text
+            style={{
+              fontSize: 13,
+              fontWeight: 500,
+              color: FG,
+              fontFamily: "'JetBrains Mono', 'Consolas', monospace",
+              letterSpacing: '0.04em',
+            }}
+          >
             {formatElapsed(screenTime.elapsed)}
-            <Text style={{ fontSize: 13, color: '#9ca3af', fontWeight: 400 }}>
-              {' '}/ {formatElapsed(screenTime.threshold)}
+            <Text style={{ fontSize: 13, color: FG_DIM, fontWeight: 300 }}>
+              {' / '}{formatElapsed(screenTime.threshold)}
             </Text>
           </Text>
         </div>
       )}
 
-      <Row gutter={[20, 20]}>
-        {/* Break reminder */}
+      <Row gutter={[16, 16]}>
         <Col xs={24} sm={8}>
           <ReminderCard
             icon={<CoffeeOutlined />}
-            label="Break Reminder"
+            label="Break"
             description="Stand up & stretch"
-            color="#f97316"
             percent={breakPercent}
             countdown={formatTime(br.remaining)}
             enabled={br.enabled}
@@ -239,13 +271,11 @@ export default function Dashboard({ timerState, onReset }) {
           />
         </Col>
 
-        {/* Water reminder */}
         <Col xs={24} sm={8}>
           <ReminderCard
             icon={<ExperimentOutlined />}
-            label="Water Reminder"
+            label="Water"
             description="Stay hydrated"
-            color="#0ea5e9"
             percent={waterPercent}
             countdown={formatTime(water.remaining)}
             enabled={water.enabled}
@@ -254,13 +284,11 @@ export default function Dashboard({ timerState, onReset }) {
           />
         </Col>
 
-        {/* Screen time */}
         <Col xs={24} sm={8}>
           <ReminderCard
             icon={<DesktopOutlined />}
             label="Screen Break"
-            description="Take a break after set time"
-            color="#8b5cf6"
+            description="Pause from the screen"
             percent={screenPercent}
             countdown={formatElapsed(screenTime.elapsed)}
             enabled={screenTime.enabled}
@@ -270,17 +298,45 @@ export default function Dashboard({ timerState, onReset }) {
         </Col>
       </Row>
 
-      <div style={{ marginTop: 20, textAlign: 'right' }}>
-        <Text style={{ fontSize: 13, color: '#9ca3af' }}>
+      <div
+        style={{
+          marginTop: 28,
+          paddingTop: 16,
+          borderTop: `1px solid ${BORDER}`,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <Text
+          style={{
+            fontFamily: "'JetBrains Mono', 'Consolas', monospace",
+            fontSize: 10,
+            color: FG_DIM,
+            letterSpacing: '0.16em',
+            textTransform: 'uppercase',
+          }}
+        >
+          PAUSELY · TIMER UTILITY
+        </Text>
+        <Text
+          style={{
+            fontFamily: "'JetBrains Mono', 'Consolas', monospace",
+            fontSize: 10,
+            color: FG_DIM,
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+          }}
+        >
           made with ♥ by{' '}
           <a
             href="https://gopu.work"
             target="_blank"
             rel="noreferrer"
-            style={{ color: '#9ca3af', textDecoration: 'underline', textUnderlineOffset: 3 }}
+            style={{ color: FG, textDecoration: 'none', borderBottom: `1px solid ${FG}` }}
             onClick={(e) => { e.preventDefault(); window.electronAPI.openExternal('https://gopu.work'); }}
           >
-            Gopu
+            GOPU
           </a>
         </Text>
       </div>

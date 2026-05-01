@@ -1,9 +1,41 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Layout, Tabs } from 'antd';
+import { Layout, Tabs, ConfigProvider, theme } from 'antd';
 import Dashboard from './components/Dashboard';
 import Settings from './components/Settings';
 
 const { Content } = Layout;
+
+// ─── Nothing-inspired theme ───────────────────────────────────────────────────
+
+const nothingTheme = {
+  algorithm: theme.darkAlgorithm,
+  token: {
+    colorPrimary:       '#ff0000',
+    colorBgBase:        '#000000',
+    colorBgContainer:   '#141414',
+    colorBgElevated:    '#1a1a1a',
+    colorBgLayout:      '#000000',
+    colorBorder:        '#333333',
+    colorBorderSecondary:'#222222',
+    colorText:          '#ffffff',
+    colorTextSecondary: '#888888',
+    colorTextTertiary:  '#555555',
+    colorTextDisabled:  '#444444',
+    borderRadius:       0,
+    borderRadiusLG:     0,
+    borderRadiusSM:     0,
+    borderRadiusXS:     0,
+    fontFamily:         "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+    wireframe:          false,
+  },
+  components: {
+    Card:       { colorBgContainer: '#141414', boxShadow: 'none' },
+    Tabs:       { itemColor: '#888888', itemActiveColor: '#ffffff', itemHoverColor: '#ffffff', inkBarColor: '#ffffff' },
+    Tooltip:    { colorBgSpotlight: '#1a1a1a', colorTextLightSolid: '#ffffff' },
+    Switch:     { colorPrimary: '#ff0000', colorPrimaryHover: '#ff0000' },
+    Progress:   { colorText: '#ffffff' },
+  },
+};
 
 // ─── Alert Sound ──────────────────────────────────────────────────────────────
 
@@ -129,15 +161,17 @@ export default function App() {
   ];
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Content style={{ padding: '0 24px 24px' }}>
-        <Tabs
-          activeKey={activeTab}
-          onChange={setActiveTab}
-          items={tabs}
-          style={{ marginTop: 4 }}
-        />
-      </Content>
-    </Layout>
+    <ConfigProvider theme={nothingTheme}>
+      <Layout style={{ minHeight: '100vh', background: 'transparent' }}>
+        <Content style={{ padding: '0 28px 28px' }}>
+          <Tabs
+            activeKey={activeTab}
+            onChange={setActiveTab}
+            items={tabs}
+            style={{ marginTop: 0 }}
+          />
+        </Content>
+      </Layout>
+    </ConfigProvider>
   );
 }

@@ -105,24 +105,24 @@ function clearAllWarnings() {
 
 const NOTIF_CONFIG = {
   break: {
-    icon:        '☕',
-    iconBg:      '#fff7ed',
-    borderColor: '#fed7aa',
-    color:       '#f97316',
+    icon:        '◐',
+    iconBg:      '#000000',
+    borderColor: '#333333',
+    color:       '#ffffff',
     label:       'break',
   },
   water: {
-    icon:        '💧',
-    iconBg:      '#f0f9ff',
-    borderColor: '#bae6fd',
-    color:       '#0ea5e9',
-    label:       'water reminder',
+    icon:        '◇',
+    iconBg:      '#000000',
+    borderColor: '#333333',
+    color:       '#ffffff',
+    label:       'water',
   },
   screenTime: {
-    icon:        '🖥️',
-    iconBg:      '#faf5ff',
-    borderColor: '#ddd6fe',
-    color:       '#8b5cf6',
+    icon:        '▣',
+    iconBg:      '#000000',
+    borderColor: '#333333',
+    color:       '#ffffff',
     label:       'screen break',
   },
 };
@@ -274,10 +274,11 @@ function checkWarning(type, secondsLeft, total) {
     warningState[type].warned1min = true;
     sendNotif(`warning-${type}`, {
       ...cfg,
-      bgColor:     '#fffbeb',
-      borderColor: '#fcd34d',
-      title:       `1 min to ${cfg.label}`,
-      description: `Get ready — your ${cfg.label} is coming up in 1 minute.`,
+      bgColor:     '#000000',
+      borderColor: '#ff0000',
+      color:       '#ff0000',
+      title:       `1 MIN TO ${cfg.label.toUpperCase()}`,
+      description: `Your ${cfg.label} is coming up in 1 minute.`,
     });
   }
 
@@ -402,7 +403,7 @@ function createWindow() {
     },
     title:           'Pausely',
     show:            false,
-    backgroundColor: '#f5f6fa',
+    backgroundColor: '#000000',
     icon:            fs.existsSync(ICON_PATH) ? ICON_PATH : undefined,
   });
 
