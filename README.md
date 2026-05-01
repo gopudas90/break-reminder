@@ -1,8 +1,6 @@
 <div align="center">
 
-<img src="docs/screenshots/banner.svg" alt="Pausely" width="100%"/>
-
-<br/>
+# Pausely
 
 [![Latest release](https://img.shields.io/github/v/release/gopudas90/break-reminder?style=flat-square&color=ff0000&labelColor=000000)](https://github.com/gopudas90/break-reminder/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/gopudas90/break-reminder/total?style=flat-square&color=ffffff&labelColor=000000)](https://github.com/gopudas90/break-reminder/releases)
@@ -32,36 +30,6 @@ Pausely runs quietly in your system tray and nudges you at the intervals you set
 - **Screen Break** — give your eyes a rest
 
 Each reminder fires a soft musical chime, a corner notification, and a full-screen modal so you actually notice it. Timers stop after each reminder and only restart when you ask them to — no autopilot.
-
-<br/>
-
-## Screenshots
-
-<div align="center">
-
-<img src="docs/screenshots/dashboard.svg" alt="Dashboard" width="100%"/>
-
-<sub><strong>Dashboard</strong> — three timers, dot-matrix clocks, status pills.</sub>
-
-<br/><br/>
-
-<img src="docs/screenshots/settings.svg" alt="Settings" width="100%"/>
-
-<sub><strong>Settings</strong> — toggle each reminder on/off and pick its interval.</sub>
-
-<br/><br/>
-
-<img src="docs/screenshots/notification.svg" alt="Notification popup" width="50%"/>
-
-<sub><strong>Corner popup</strong> — appears above the taskbar 1 minute and 15 seconds before each reminder.</sub>
-
-<br/><br/>
-
-<img src="docs/screenshots/modal.svg" alt="Reminder modal" width="100%"/>
-
-<sub><strong>Full-screen reminder</strong> — locks the close button for 5 seconds so you actually pause. Restart the timer or close to dismiss.</sub>
-
-</div>
 
 <br/>
 
