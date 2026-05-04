@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pausely — A gentle desktop reminder</title>
+<meta name="description" content="Pausely is a desktop break reminder for breaks, water, and screen time. Charcoal UI, Reminder Buddy mascot, fully offline." />
+
+<meta property="og:title" content="Pausely — A gentle desktop reminder" />
+<meta property="og:description" content="Take care of your eyes, your back, and your hydration. Pausely nudges you with the Reminder Buddy mascot." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://gopudas90.github.io/break-reminder/" />
+<meta property="og:image" content="https://gopudas90.github.io/break-reminder/assets/mascot/idle.png" />
+
+<link rel="icon" type="image/png" href="assets/mascot/idle.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --bg-0:    #1e1e1e;
+    --bg-1:    #2a2a2a;
+    --bg-2:    #303030;
+    --border:  #3d3d3d;
+    --fg:      #ffffff;
+    --fg-dim:  #999999;
+    --fg-faint:#5a5a5a;
+    --accent:  #ff6b1a;
+    --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-0);
+    color: var(--fg);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    background-image: radial-gradient(circle, #2c2c2c 1px, transparent 1px);
+    background-size: 14px 14px;
+    background-position: 0 0;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ── Layout ─────────────────────────────────────────────────────────────── */
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ── Top bar ───────────────────────────────────────────────────────────── */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(30,30,30,0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .topbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+  }
+
+  .brand-name {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 24px;
+  }
+
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    transition: color 0.15s;
+  }
+
+  .nav-links a:hover { color: var(--fg); }
+
+  /* ── Sections ──────────────────────────────────────────────────────────── */
+  section { padding: 80px 0; }
+
+  .overline {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-dim);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .accent { color: var(--accent); }
+
+  /* ── Hero ──────────────────────────────────────────────────────────────── */
+  .hero {
+    padding: 80px 0 64px;
+    text-align: center;
+  }
+
+  .hero-mascot {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 28px;
+    display: block;
+    animation: float 3.4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-8px); }
+  }
+
+  .hero h1 {
+    font-family: var(--mono);
+    font-size: clamp(40px, 8vw, 84px);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    margin: 0 0 18px;
+    line-height: 1;
+  }
+
+  .hero-tag {
+    font-size: 18px;
+    color: var(--fg-dim);
+    max-width: 560px;
+    margin: 0 auto 36px;
+    font-weight: 300;
+  }
+
+  .hero-tag strong { color: var(--fg); font-weight: 500; }
+
+  .cta-row {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 26px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1px solid var(--fg);
+    color: var(--fg);
+    background: transparent;
+    transition: background 0.15s, color 0.15s;
+    text-decoration: none;
+  }
+
+  .btn:hover {
+    background: var(--fg);
+    color: var(--bg-0);
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .btn-primary:hover {
+    background: var(--fg);
+    border-color: var(--fg);
+    color: var(--bg-0);
+  }
+
+  .hero-meta {
+    margin-top: 24px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-faint);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  /* ── Mascot showcase ───────────────────────────────────────────────────── */
+  .mascot-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 36px;
+  }
+
+  .mascot-card {
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    padding: 32px 22px;
+    text-align: center;
+  }
+
+  .mascot-card img {
+    width: 130px;
+    height: 130px;
+    object-fit: contain;
+    margin-bottom: 18px;
+    animation: bob 3s ease-in-out infinite;
+  }
+  .mascot-card:nth-child(2) img { animation-delay: 0.4s; }
+  .mascot-card:nth-child(3) img { animation-delay: 0.8s; }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-5px); }
+  }
+
+  .mascot-card h3 {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin: 0 0 6px;
+  }
+
+  .mascot-card p {
+    font-size: 13px;
+    color: var(--fg-dim);
+    margin: 0;
+    font-weight: 300;
+  }
+
+  /* ── Section heading ───────────────────────────────────────────────────── */
+  h2 {
+    font-family: var(--mono);
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    margin: 0 0 18px;
+    line-height: 1.05;
+  }
+
+  h2 + .lead {
+    font-size: 16px;
+    color: var(--fg-dim);
+    max-width: 600px;
+    margin: 0 0 32px;
+  }
+
+  /* ── Features ──────────────────────────────────────────────────────────── */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-top: 28px;
+  }
+
+  .feature {
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    padding: 26px 24px;
+  }
+
+  .feature-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .feature h3 {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin: 0 0 10px;
+  }
+
+  .feature p {
+    color: var(--fg-dim);
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  /* ── How it works (timeline) ───────────────────────────────────────────── */
+  .timeline {
+    margin-top: 32px;
+    border-left: 1px solid var(--border);
+    padding-left: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .step {
+    position: relative;
+  }
+
+  .step::before {
+    content: '';
+    position: absolute;
+    left: -33px;
+    top: 6px;
+    width: 9px;
+    height: 9px;
+    background: var(--accent);
+  }
+
+  .step-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .step h4 {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin: 0 0 8px;
+  }
+
+  .step p {
+    color: var(--fg-dim);
+    font-size: 14px;
+    margin: 0;
+  }
+
+  /* ── CTA strip ─────────────────────────────────────────────────────────── */
+  .cta-strip {
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    padding: 48px 36px;
+    margin: 40px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .cta-strip-text h3 {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    margin: 0 0 8px;
+  }
+
+  .cta-strip-text p {
+    color: var(--fg-dim);
+    font-size: 14px;
+    margin: 0;
+  }
+
+  /* ── Specs strip ──────────────────────────────────────────────────────── */
+  .specs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-top: 28px;
+  }
+
+  .spec {
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    padding: 22px;
+  }
+
+  .spec-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-dim);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .spec-value {
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--fg);
+  }
+
+  /* ── Footer ────────────────────────────────────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 36px 0;
+    margin-top: 60px;
+  }
+
+  .foot-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-dim);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .foot-inner a { color: var(--fg); border-bottom: 1px solid var(--fg); padding-bottom: 1px; }
+  .foot-inner a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── Responsive ────────────────────────────────────────────────────────── */
+  @media (max-width: 760px) {
+    .nav-links { display: none; }
+    .mascot-grid { grid-template-columns: 1fr; }
+    .features { grid-template-columns: 1fr; }
+    .specs { grid-template-columns: repeat(2, 1fr); }
+    section { padding: 56px 0; }
+    .hero { padding: 48px 0 32px; }
+    .cta-strip { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── TOP BAR ─────────────────────────────────────────────────────────────── -->
+<div class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="brand">
+      <img src="assets/mascot/idle.png" alt="" />
+      <span class="brand-name">Pausely</span>
+    </div>
+    <nav class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#download">Download</a>
+      <a href="https://github.com/gopudas90/break-reminder" target="_blank" rel="noreferrer">GitHub</a>
+    </nav>
+  </div>
+</div>
+
+<!-- ── HERO ────────────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="wrap">
+    <img class="hero-mascot" src="assets/mascot/idle.png" alt="Reminder Buddy" />
+    <h1>Pausely</h1>
+    <p class="hero-tag">A gentle desktop reminder for <strong>breaks</strong>, <strong>water</strong>, and <strong>screen time</strong>. Meet your <strong>Reminder Buddy</strong> — a tiny black blob who taps you on the shoulder when it's time to pause.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://github.com/gopudas90/break-reminder/releases/latest/download/Pausely-Setup-1.2.0.exe">↓ Download for Windows</a>
+      <a class="btn" href="https://github.com/gopudas90/break-reminder" target="_blank" rel="noreferrer">View on GitHub</a>
+    </div>
+    <div class="hero-meta">v1.2.0 · Windows 10 / 11 · 83 MB · Free &amp; Offline</div>
+  </div>
+</section>
+
+<!-- ── MASCOT SHOWCASE ────────────────────────────────────────────────────── -->
+<section>
+  <div class="wrap">
+    <div class="overline">// Meet your buddy</div>
+    <h2>Three poses, one job<br/><span class="accent">→</span> remind you to take care.</h2>
+    <p class="lead">Each timer has its own pose so the reminder feels personal — never just a beep.</p>
+
+    <div class="mascot-grid">
+      <div class="mascot-card">
+        <img src="assets/mascot/break.png" alt="" />
+        <h3>Break</h3>
+        <p>Stand up &amp; stretch. Buddy is ready to move.</p>
+      </div>
+      <div class="mascot-card">
+        <img src="assets/mascot/water.png" alt="" />
+        <h3>Water</h3>
+        <p>Stay hydrated. Buddy carries the bottle for you.</p>
+      </div>
+      <div class="mascot-card">
+        <img src="assets/mascot/screen.png" alt="" />
+        <h3>Screen Break</h3>
+        <p>Rest your eyes. Buddy hugs the cup, eyes closed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ───────────────────────────────────────────────────────────── -->
+<section id="features">
+  <div class="wrap">
+    <div class="overline">// What's inside</div>
+    <h2>Built to be ignored<br/>only when you want to.</h2>
+
+    <div class="features">
+      <div class="feature">
+        <div class="feature-num">01 // Reminders</div>
+        <h3>Three independent timers</h3>
+        <p>Break, water, and screen-break — each with its own on/off switch and interval. Defaults are 45 / 90 / 60 minutes; tune anything.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-num">02 // Heads-up</div>
+        <h3>Layered warnings</h3>
+        <p>A polite "1 min" popup with the buddy, a live 15-second countdown, then a full-screen reminder. You will not miss it.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-num">03 // Considerate</div>
+        <h3>No autopilot</h3>
+        <p>Timers stop after each reminder so you decide when to restart. The full-screen modal locks for 5 seconds so it isn't dismissed by reflex.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-num">04 // Concurrent</div>
+        <h3>Reminders queue, not collide</h3>
+        <p>If multiple timers fire at once, they queue and play sequentially. Other timers pause while a reminder is on screen.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-num">05 // Tray</div>
+        <h3>Lives in your system tray</h3>
+        <p>Hide the window any time — Pausely keeps running. Open from the tray or reset any timer from the tray menu.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-num">06 // Private</div>
+        <h3>Fully offline</h3>
+        <p>No accounts. No telemetry. No network calls. Settings stay on your device, period.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ───────────────────────────────────────────────────────── -->
+<section id="how">
+  <div class="wrap">
+    <div class="overline">// How a reminder unfolds</div>
+    <h2>Quiet, then clear,<br/>then unmissable.</h2>
+
+    <div class="timeline">
+      <div class="step">
+        <div class="step-tag">T-60 SEC</div>
+        <h4>The buddy says hi</h4>
+        <p>A small popup appears in the corner: "Get ready — your break buddy is heading over." A blinking orange dot, no fuss.</p>
+      </div>
+      <div class="step">
+        <div class="step-tag">T-15 SEC</div>
+        <h4>Live countdown</h4>
+        <p>The popup switches to a live 15-second countdown so you can wrap up the sentence you're typing.</p>
+      </div>
+      <div class="step">
+        <div class="step-tag">T-0 SEC</div>
+        <h4>Full-screen reminder</h4>
+        <p>A soft chime plays. The buddy takes over the whole screen. Restart the timer or close — the close button unlocks after five seconds.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA STRIP ──────────────────────────────────────────────────────────── -->
+<section id="download">
+  <div class="wrap">
+    <div class="cta-strip">
+      <div class="cta-strip-text">
+        <h3>Ready to take a break?</h3>
+        <p>Download Pausely for Windows — installs in under a minute.</p>
+      </div>
+      <a class="btn btn-primary" href="https://github.com/gopudas90/break-reminder/releases/latest/download/Pausely-Setup-1.2.0.exe">↓ Download v1.2.0</a>
+    </div>
+
+    <div class="overline">// System requirements</div>
+    <div class="specs">
+      <div class="spec">
+        <div class="spec-label">OS</div>
+        <div class="spec-value">Windows 10+</div>
+      </div>
+      <div class="spec">
+        <div class="spec-label">Architecture</div>
+        <div class="spec-value">x64</div>
+      </div>
+      <div class="spec">
+        <div class="spec-label">Disk</div>
+        <div class="spec-value">~250 MB</div>
+      </div>
+      <div class="spec">
+        <div class="spec-label">RAM</div>
+        <div class="spec-value">2 GB+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────────────────── -->
+<footer>
+  <div class="wrap foot-inner">
+    <span>Pausely · Timer Utility · v1.2.0</span>
+    <span>Made with <span style="color:var(--accent)">♥</span> by <a href="https://www.gopu.work" target="_blank" rel="noreferrer">Gopu</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
