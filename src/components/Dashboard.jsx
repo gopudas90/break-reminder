@@ -1,20 +1,20 @@
 import React from 'react';
 import { Row, Col, Card, Typography, Button, Tooltip, Skeleton } from 'antd';
-import {
-  CoffeeOutlined,
-  ExperimentOutlined,
-  DesktopOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
+import { ReloadOutlined } from '@ant-design/icons';
 import DotClock from './DotClock';
+
+import breakMascot   from '../../assets/mascot/break.png';
+import waterMascot   from '../../assets/mascot/water.png';
+import screenMascot  from '../../assets/mascot/screen.png';
+import idleMascot    from '../../assets/mascot/idle.png';
 
 const { Text } = Typography;
 
-const ACCENT  = '#ff0000';
+const ACCENT  = '#ff6b1a';
 const FG      = '#ffffff';
-const FG_DIM  = '#888888';
-const BORDER  = '#333333';
-const TRAIL   = '#1a1a1a';
+const FG_DIM  = '#999999';
+const BORDER  = '#3d3d3d';
+const SURFACE = '#2a2a2a';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -65,7 +65,7 @@ function StatusPill({ enabled, stopped }) {
 // ─── ReminderCard ─────────────────────────────────────────────────────────────
 
 function ReminderCard({
-  icon,
+  mascot,
   label,
   description,
   percent,
@@ -74,13 +74,11 @@ function ReminderCard({
   stopped,
   onReset,
 }) {
-  const ringColor = stopped ? ACCENT : (enabled ? FG : '#333333');
-
   return (
     <Card
       style={{
         border: `1px solid ${stopped ? ACCENT : BORDER}`,
-        background: '#0d0d0d',
+        background: SURFACE,
         height: '100%',
       }}
       styles={{ body: { padding: 22 } }}
@@ -88,20 +86,11 @@ function ReminderCard({
       {/* Header row */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span
-            style={{
-              width: 36,
-              height: 36,
-              border: `1px solid ${BORDER}`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 16,
-              color: FG,
-            }}
-          >
-            {icon}
-          </span>
+          <img
+            src={mascot}
+            alt=""
+            style={{ width: 44, height: 44, objectFit: 'contain', flexShrink: 0 }}
+          />
           <div>
             <Text
               style={{
@@ -184,24 +173,27 @@ export default function Dashboard({ timerState, onReset }) {
   return (
     <div style={{ paddingTop: 24 }}>
       {/* Page heading */}
-      <div style={{ marginBottom: 22, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-        <div>
-          <Text
-            style={{
-              fontFamily: "'JetBrains Mono', 'Consolas', monospace",
-              fontSize: 11,
-              letterSpacing: '0.24em',
-              color: FG_DIM,
-              textTransform: 'uppercase',
-              display: 'block',
-              marginBottom: 4,
-            }}
-          >
-            // System Status
-          </Text>
-          <Text style={{ fontSize: 26, fontWeight: 700, color: FG, letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
-            Pausely
-          </Text>
+      <div style={{ marginBottom: 22, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <img src={idleMascot} alt="" style={{ width: 64, height: 64, objectFit: 'contain', flexShrink: 0 }} />
+          <div>
+            <Text
+              style={{
+                fontFamily: "'JetBrains Mono', 'Consolas', monospace",
+                fontSize: 11,
+                letterSpacing: '0.24em',
+                color: FG_DIM,
+                textTransform: 'uppercase',
+                display: 'block',
+                marginBottom: 4,
+              }}
+            >
+              // Hi, I'm your buddy
+            </Text>
+            <Text style={{ fontSize: 26, fontWeight: 700, color: FG, letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
+              Pausely
+            </Text>
+          </div>
         </div>
         <Text
           style={{
@@ -212,7 +204,7 @@ export default function Dashboard({ timerState, onReset }) {
             textTransform: 'uppercase',
           }}
         >
-          v1.0.0 · ONLINE
+          v1.1.0 · ONLINE
         </Text>
       </div>
 
@@ -220,7 +212,7 @@ export default function Dashboard({ timerState, onReset }) {
       {screenTime.enabled && (
         <div
           style={{
-            background: '#0d0d0d',
+            background: SURFACE,
             border: `1px solid ${BORDER}`,
             padding: '14px 20px',
             marginBottom: 18,
@@ -260,7 +252,7 @@ export default function Dashboard({ timerState, onReset }) {
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={8}>
           <ReminderCard
-            icon={<CoffeeOutlined />}
+            mascot={breakMascot}
             label="Break"
             description="Stand up & stretch"
             percent={breakPercent}
@@ -273,7 +265,7 @@ export default function Dashboard({ timerState, onReset }) {
 
         <Col xs={24} sm={8}>
           <ReminderCard
-            icon={<ExperimentOutlined />}
+            mascot={waterMascot}
             label="Water"
             description="Stay hydrated"
             percent={waterPercent}
@@ -286,7 +278,7 @@ export default function Dashboard({ timerState, onReset }) {
 
         <Col xs={24} sm={8}>
           <ReminderCard
-            icon={<DesktopOutlined />}
+            mascot={screenMascot}
             label="Screen Break"
             description="Pause from the screen"
             percent={screenPercent}
@@ -330,11 +322,11 @@ export default function Dashboard({ timerState, onReset }) {
         >
           made with ♥ by{' '}
           <a
-            href="https://gopu.work"
+            href="https://www.gopu.work"
             target="_blank"
             rel="noreferrer"
             style={{ color: FG, textDecoration: 'none', borderBottom: `1px solid ${FG}` }}
-            onClick={(e) => { e.preventDefault(); window.electronAPI.openExternal('https://gopu.work'); }}
+            onClick={(e) => { e.preventDefault(); window.electronAPI.openExternal('https://www.gopu.work'); }}
           >
             GOPU
           </a>

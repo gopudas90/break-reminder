@@ -93,7 +93,8 @@ const warningState = {
 
 function clearWarnings(type) {
   warningState[type].warned1min = false;
-  dismissNotif(`warning-${type}`);
+  dismissNotif(`warn1min-${type}`);
+  dismissNotif(`countdown-${type}`);
   dismissNotif(type);
 }
 
@@ -103,25 +104,32 @@ function clearAllWarnings() {
 
 // ─── Notification config ───────────────────────────────────────────────────────
 
+function mascotUrl(name) {
+  return 'file:///' + path.join(__dirname, 'assets', 'mascot', name).replace(/\\/g, '/');
+}
+
 const NOTIF_CONFIG = {
   break: {
+    mascot:      mascotUrl('break.png'),
     icon:        '◐',
-    iconBg:      '#000000',
-    borderColor: '#333333',
+    iconBg:      '#2a2a2a',
+    borderColor: '#3d3d3d',
     color:       '#ffffff',
     label:       'break',
   },
   water: {
+    mascot:      mascotUrl('water.png'),
     icon:        '◇',
-    iconBg:      '#000000',
-    borderColor: '#333333',
+    iconBg:      '#2a2a2a',
+    borderColor: '#3d3d3d',
     color:       '#ffffff',
     label:       'water',
   },
   screenTime: {
+    mascot:      mascotUrl('screen.png'),
     icon:        '▣',
-    iconBg:      '#000000',
-    borderColor: '#333333',
+    iconBg:      '#2a2a2a',
+    borderColor: '#3d3d3d',
     color:       '#ffffff',
     label:       'screen break',
   },
@@ -228,6 +236,8 @@ function openModal(type, title, body) {
   reminderModal.webContents.once('did-finish-load', () => {
     reminderModal.webContents.send('modal-data', {
       type, title, body,
+      mascot:     cfg.mascot,
+      label:      cfg.label,
       icon:       cfg.icon,
       color:      cfg.color,
       iconBg:     cfg.iconBg,
@@ -268,25 +278,30 @@ function checkWarning(type, secondsLeft, total) {
   if (secondsLeft <= 0) return;
   const cfg = NOTIF_CONFIG[type];
 
-  // 1-minute warning — fires as soon as secondsLeft drops into the 16-60 range
-  // (>15 so it doesn't overlap the 15-sec countdown, no total check so all timers qualify)
-  if (secondsLeft <= 60 && secondsLeft > 15 && !warningState[type].warned1min) {
+  // 1-minute warning — text card on its own key. Fires once when secondsLeft
+  // first drops below 65 (slightly above 60 to absorb tick drift).
+  if (secondsLeft <= 65 && secondsLeft > 15 && !warningState[type].warned1min) {
     warningState[type].warned1min = true;
-    sendNotif(`warning-${type}`, {
+    sendNotif(`warn1min-${type}`, {
       ...cfg,
-      bgColor:     '#000000',
-      borderColor: '#ff0000',
-      color:       '#ff0000',
-      title:       `1 MIN TO ${cfg.label.toUpperCase()}`,
-      description: `Your ${cfg.label} is coming up in 1 minute.`,
+      color:       '#ff6b1a',     // thin top progress strip + tag accent only
+      tag:         '1 MIN',
+      title:       `Get ready`,
+      description: `Your ${cfg.label} buddy is heading over.`,
     });
   }
 
-  // 15-second countdown (updates every second in-place)
+  // 15-second countdown — separate card so it doesn't collide with the 1-min
+  // text card. The text card is dismissed when the countdown takes over.
   if (secondsLeft <= 15) {
-    sendNotif(`warning-${type}`, {
+    if (warningState[type].warned1min) {
+      // Hide the 1-min text card now that the countdown is starting
+      dismissNotif(`warn1min-${type}`);
+    }
+    sendNotif(`countdown-${type}`, {
       ...cfg,
-      countdown: secondsLeft,
+      color:       '#ff6b1a',     // progress strip + countdown number stay orange
+      countdown:   secondsLeft,
     });
   }
 }
@@ -296,8 +311,9 @@ function checkWarning(type, secondsLeft, total) {
 function fireReminder(type, title, body) {
   notify(title, body);
 
-  // Close the warning popup for this type
-  dismissNotif(`warning-${type}`);
+  // Close any warning popups for this type
+  dismissNotif(`warn1min-${type}`);
+  dismissNotif(`countdown-${type}`);
   warningState[type].warned1min = false;
 
   // Show full-screen modal
@@ -403,7 +419,7 @@ function createWindow() {
     },
     title:           'Pausely',
     show:            false,
-    backgroundColor: '#000000',
+    backgroundColor: '#1e1e1e',
     icon:            fs.existsSync(ICON_PATH) ? ICON_PATH : undefined,
   });
 

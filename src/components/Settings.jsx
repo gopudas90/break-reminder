@@ -9,18 +9,18 @@ import {
   message,
   Skeleton,
 } from 'antd';
-import {
-  CoffeeOutlined,
-  ExperimentOutlined,
-  DesktopOutlined,
-  SaveOutlined,
-} from '@ant-design/icons';
+import { SaveOutlined } from '@ant-design/icons';
+
+import breakMascot   from '../../assets/mascot/break.png';
+import waterMascot   from '../../assets/mascot/water.png';
+import screenMascot  from '../../assets/mascot/screen.png';
 
 const { Text } = Typography;
 
-const FG     = '#ffffff';
-const FG_DIM = '#888888';
-const BORDER = '#333333';
+const FG      = '#ffffff';
+const FG_DIM  = '#999999';
+const BORDER  = '#3d3d3d';
+const SURFACE = '#2a2a2a';
 
 const MONO_LABEL = {
   fontFamily: "'JetBrains Mono', 'Consolas', monospace",
@@ -36,11 +36,11 @@ const SUB_TEXT = { fontSize: 11, color: FG_DIM, fontWeight: 300, letterSpacing: 
 
 // ─── Settings ─────────────────────────────────────────────────────────────────
 
-function ReminderSection({ icon, name, title, subtitle, valueKey, addonAfter, max }) {
+function ReminderSection({ mascot, name, title, subtitle, valueKey, addonAfter, max }) {
   return (
     <Card
       style={{
-        background: '#0d0d0d',
+        background: SURFACE,
         border: `1px solid ${BORDER}`,
         marginBottom: 14,
       }}
@@ -48,20 +48,7 @@ function ReminderSection({ icon, name, title, subtitle, valueKey, addonAfter, ma
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <span
-            style={{
-              width: 36,
-              height: 36,
-              border: `1px solid ${BORDER}`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 16,
-              color: FG,
-            }}
-          >
-            {icon}
-          </span>
+          <img src={mascot} alt="" style={{ width: 48, height: 48, objectFit: 'contain', flexShrink: 0 }} />
           <div>
             <Text style={MONO_LABEL}>{title}</Text>
             <Text style={SUB_TEXT}>{subtitle}</Text>
@@ -115,27 +102,8 @@ export default function Settings({ settings, onSave }) {
   }
 
   return (
-    <div style={{ paddingTop: 24, maxWidth: 620 }}>
+    <div style={{ paddingTop: 24 }}>
       {contextHolder}
-
-      <div style={{ marginBottom: 22 }}>
-        <Text
-          style={{
-            fontFamily: "'JetBrains Mono', 'Consolas', monospace",
-            fontSize: 11,
-            letterSpacing: '0.24em',
-            color: FG_DIM,
-            textTransform: 'uppercase',
-            display: 'block',
-            marginBottom: 4,
-          }}
-        >
-          // Configuration
-        </Text>
-        <Text style={{ fontSize: 26, fontWeight: 700, color: FG, letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
-          Settings
-        </Text>
-      </div>
 
       <Form
         form={form}
@@ -145,8 +113,62 @@ export default function Settings({ settings, onSave }) {
         onValuesChange={() => setHasChanges(true)}
         initialValues={settings}
       >
+        {/* Heading row with the Save Settings button at the top */}
+        <div
+          style={{
+            marginBottom: 20,
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'space-between',
+            gap: 16,
+            flexWrap: 'wrap',
+          }}
+        >
+          <div>
+            <Text
+              style={{
+                fontFamily: "'JetBrains Mono', 'Consolas', monospace",
+                fontSize: 11,
+                letterSpacing: '0.24em',
+                color: FG_DIM,
+                textTransform: 'uppercase',
+                display: 'block',
+                marginBottom: 4,
+              }}
+            >
+              // Configuration
+            </Text>
+            <Text style={{ fontSize: 26, fontWeight: 700, color: FG, letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
+              Settings
+            </Text>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              icon={<SaveOutlined />}
+              disabled={!hasChanges}
+              style={{ height: 40, paddingInline: 28 }}
+            >
+              Save Settings
+            </Button>
+            <Text
+              style={{
+                fontFamily: "'JetBrains Mono', 'Consolas', monospace",
+                fontSize: 9,
+                color: FG_DIM,
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+              }}
+            >
+              {hasChanges ? '→ Click to save changes' : '→ Edit a value below to enable'}
+            </Text>
+          </div>
+        </div>
+
         <ReminderSection
-          icon={<CoffeeOutlined />}
+          mascot={breakMascot}
           name="break"
           title="Break"
           subtitle="Stand up and stretch"
@@ -156,7 +178,7 @@ export default function Settings({ settings, onSave }) {
         />
 
         <ReminderSection
-          icon={<ExperimentOutlined />}
+          mascot={waterMascot}
           name="water"
           title="Water"
           subtitle="Stay hydrated"
@@ -166,7 +188,7 @@ export default function Settings({ settings, onSave }) {
         />
 
         <ReminderSection
-          icon={<DesktopOutlined />}
+          mascot={screenMascot}
           name="screenTime"
           title="Screen Break"
           subtitle="Take a short break after set time"
@@ -175,20 +197,10 @@ export default function Settings({ settings, onSave }) {
           max={1440}
         />
 
-        <Form.Item style={{ marginTop: 24, marginBottom: 14 }}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            icon={<SaveOutlined />}
-            disabled={!hasChanges}
-            style={{ height: 40, paddingInline: 28 }}
-          >
-            Save Settings
-          </Button>
-        </Form.Item>
-
         <Text
           style={{
+            display: 'block',
+            marginTop: 16,
             fontFamily: "'JetBrains Mono', 'Consolas', monospace",
             fontSize: 10,
             color: FG_DIM,

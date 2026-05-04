@@ -1,6 +1,6 @@
 {
   "name": "pausely",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Pausely — gentle reminders for breaks, water, and screen time",
   "main": "main.js",
   "author": "Gopu <hello@gopu.work>",

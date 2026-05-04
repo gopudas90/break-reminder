@@ -6,12 +6,12 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg:        #000000;
-    --surface:   #0d0d0d;
-    --border:    #333333;
+    --bg:        #1e1e1e;
+    --surface:   #2a2a2a;
+    --border:    #3d3d3d;
     --fg:        #ffffff;
-    --fg-dim:    #888888;
-    --accent:    #ff0000;
+    --fg-dim:    #999999;
+    --accent:    #ff6b1a;
     --mono: 'JetBrains Mono', 'SF Mono', 'Consolas', 'Courier New', monospace;
   }
 
@@ -40,18 +40,16 @@
 
   @keyframes fade-in { to { opacity: 1; } }
 
-  /* Card — sharp corners, 1px border, glassmorphism */
+  /* Card — charcoal surface, sharp corners, 1px border */
   #card {
-    background: rgba(10, 10, 10, 0.88);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    background: var(--surface);
+    background-image: radial-gradient(circle, #353535 1px, transparent 1px);
+    background-size: 16px 16px;
     border: 1px solid var(--border);
     padding: 48px 52px 40px;
     width: 480px;
     text-align: center;
-    box-shadow:
-      0 0 0 1px rgba(255,255,255,0.02),
-      0 32px 80px rgba(0,0,0,0.6);
+    box-shadow: 0 32px 80px rgba(0,0,0,0.65);
     transform: scale(0.94) translateY(16px);
     opacity: 0;
     animation: card-in 0.42s cubic-bezier(0.22, 1.4, 0.36, 1) 0.10s forwards;
@@ -109,15 +107,26 @@
     color: var(--fg-dim);
   }
 
-  /* Icon */
+  /* Icon — transparent container, mascot sits on the card surface */
   #icon-wrap {
-    width: 76px; height: 76px;
+    width: 160px; height: 160px;
     display: flex; align-items: center; justify-content: center;
     font-size: 36px;
-    margin: 32px auto 26px;
-    border: 1px solid var(--border);
+    margin: 28px auto 18px;
     color: var(--fg);
-    background: var(--bg);
+  }
+
+  #icon-wrap img {
+    width: 160px;
+    height: 160px;
+    object-fit: contain;
+    display: block;
+    animation: mascot-bounce 2.4s ease-in-out infinite;
+  }
+
+  @keyframes mascot-bounce {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-4px); }
   }
 
   /* Title */
@@ -175,6 +184,16 @@
     color: var(--accent);
   }
 
+  #close-btn {
+    border-color: var(--fg);
+    color: var(--fg);
+  }
+
+  #close-btn:hover:not(:disabled) {
+    background: var(--fg);
+    color: var(--bg);
+  }
+
   #restart-btn:hover:not(:disabled) {
     background: var(--accent);
     color: var(--fg);
@@ -221,7 +240,7 @@
     <div id="progress-bar"></div>
     <div id="tag"><span id="tag-dot"></span><span id="tag-label">SYS · REMINDER</span></div>
     <div id="corner">[ PAUSELY ]</div>
-    <div id="icon-wrap">◉</div>
+    <div id="icon-wrap"><img id="mascot-img" alt="" style="display:none"/><span id="icon-glyph">◉</span></div>
     <div id="title">Reminder</div>
     <div id="body-text">Time's up.</div>
     <div id="btn-row">
@@ -243,7 +262,17 @@
   window.modalAPI.onData((data) => {
     reminderType = data.type;
 
-    document.getElementById('icon-wrap').textContent  = data.icon;
+    const mascotImg  = document.getElementById('mascot-img');
+    const iconGlyph  = document.getElementById('icon-glyph');
+    if (data.mascot) {
+      mascotImg.src             = data.mascot;
+      mascotImg.style.display   = 'block';
+      iconGlyph.style.display   = 'none';
+    } else {
+      iconGlyph.textContent     = data.icon;
+      mascotImg.style.display   = 'none';
+      iconGlyph.style.display   = 'inline';
+    }
     document.getElementById('title').textContent      = data.title;
     document.getElementById('body-text').textContent  = data.body;
     document.getElementById('tag-label').textContent  = 'SYS · ' + (data.label ? data.label.toUpperCase() : 'REMINDER');

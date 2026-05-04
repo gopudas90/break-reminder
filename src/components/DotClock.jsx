@@ -1,9 +1,9 @@
 import React from 'react';
 
-const ACCENT = '#ff0000';
+const ACCENT = '#ff6b1a';
 const FG     = '#ffffff';
-const FG_DIM = '#3a3a3a';
-const FG_OFF = '#222222';
+const FG_DIM = '#4a4a4a';
+const FG_OFF = '#3a3a3a';
 
 // ─── DotClock ────────────────────────────────────────────────────────────────
 // A circular dot-matrix progress indicator inspired by Nothing's design system.
@@ -49,7 +49,7 @@ export default function DotClock({
     let fill;
     if (isLeader)       fill = ACCENT;
     else if (isFilled)  fill = activeColor;
-    else                fill = FG_OFF;
+    else                fill = isQuarter ? FG_DIM : FG_OFF;
 
     dots.push(
       <circle
@@ -58,7 +58,7 @@ export default function DotClock({
         cy={y}
         r={r}
         fill={fill}
-        style={isLeader ? { filter: 'drop-shadow(0 0 4px #ff0000)' } : undefined}
+        style={isLeader ? { filter: 'drop-shadow(0 0 4px #ff6b1a)' } : undefined}
       />,
     );
   }
@@ -117,7 +117,7 @@ export default function DotClock({
           <span
             style={{
               fontSize: 9,
-              color: '#666',
+              color: '#9a9a9a',
               letterSpacing: '0.22em',
               textTransform: 'uppercase',
               marginTop: 6,

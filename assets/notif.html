@@ -6,12 +6,12 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg:        #000000;
-    --surface:   #0d0d0d;
-    --border:    #333333;
+    --bg:        #1e1e1e;
+    --surface:   #2a2a2a;
+    --border:    #3d3d3d;
     --fg:        #ffffff;
-    --fg-dim:    #888888;
-    --accent:    #ff0000;
+    --fg-dim:    #999999;
+    --accent:    #ff6b1a;
     --mono: 'JetBrains Mono', 'SF Mono', 'Consolas', 'Courier New', monospace;
   }
 
@@ -34,12 +34,10 @@
   .card {
     width: 380px;
     background: var(--surface);
-    background-image: radial-gradient(circle, #1f1f1f 1px, transparent 1px);
+    background-image: radial-gradient(circle, #353535 1px, transparent 1px);
     background-size: 12px 12px;
     border: 1px solid var(--border);
-    box-shadow:
-      0 0  0  1px rgba(255,255,255,0.02),
-      0 8px 24px rgba(0,0,0,0.65);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.65);
     padding: 13px 14px;
     display: flex;
     align-items: flex-start;
@@ -78,26 +76,65 @@
     transition: width 0.95s linear;
   }
 
-  /* Icon */
+  /* Icon — transparent container, mascot sits on the card surface */
   .icon-wrap {
-    width: 34px;
-    height: 34px;
-    border: 1px solid var(--border);
-    background: var(--bg);
+    width: 56px;
+    height: 56px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 15px;
+    font-size: 18px;
     flex-shrink: 0;
     color: var(--fg);
+  }
+
+  .icon-wrap img {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+    display: block;
+    animation: mascot-bob 2.4s ease-in-out infinite;
+  }
+
+  @keyframes mascot-bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-2px); }
   }
 
   /* Body */
   .body { flex: 1; min-width: 0; }
 
+  .tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .tag::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    animation: tag-blink 1.4s ease-in-out infinite;
+  }
+
+  @keyframes tag-blink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.3; }
+  }
+
   .title {
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--fg);
     line-height: 1.3;
@@ -176,7 +213,7 @@
 <body>
 <div id="root"></div>
 <script>
-  const CARD_H  = 78;
+  const CARD_H  = 92;
   const GAP     = 8;
   const PADDING = 16;
   const COUNTDOWN_MAX = 15;
@@ -221,11 +258,18 @@
     }
     card.appendChild(bar);
 
-    // Icon
+    // Icon — mascot image if provided, else fallback glyph
     const iconWrap = document.createElement('div');
     iconWrap.className = 'icon-wrap';
     if (data.borderColor) iconWrap.style.borderColor = data.borderColor;
-    iconWrap.textContent = data.icon || '◉';
+    if (data.mascot) {
+      const img = document.createElement('img');
+      img.src = data.mascot;
+      img.alt = '';
+      iconWrap.appendChild(img);
+    } else {
+      iconWrap.textContent = data.icon || '◉';
+    }
     card.appendChild(iconWrap);
 
     // Body
@@ -270,6 +314,12 @@
       row.appendChild(lbl);
       body.appendChild(row);
     } else {
+      if (data.tag) {
+        const tag = document.createElement('div');
+        tag.className = 'tag';
+        tag.textContent = data.tag;
+        body.appendChild(tag);
+      }
       const title = document.createElement('div');
       title.className = 'title';
       title.textContent = data.title || '';
