@@ -81,4 +81,4 @@ If you have any questions about this Privacy Policy or Pausely's privacy practic
 
 **Gopu**
 Email: aiops@staxlabs.in
-Website: https://gopu.work
+LinkedIn: https://www.linkedin.com/in/gopudas90/

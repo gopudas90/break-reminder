@@ -322,11 +322,11 @@ export default function Dashboard({ timerState, onReset }) {
         >
           made with ♥ by{' '}
           <a
-            href="https://www.gopu.work"
+            href="https://www.linkedin.com/in/gopudas90/"
             target="_blank"
             rel="noreferrer"
             style={{ color: FG, textDecoration: 'none', borderBottom: `1px solid ${FG}` }}
-            onClick={(e) => { e.preventDefault(); window.electronAPI.openExternal('https://www.gopu.work'); }}
+            onClick={(e) => { e.preventDefault(); window.electronAPI.openExternal('https://www.linkedin.com/in/gopudas90/'); }}
           >
             GOPU
           </a>

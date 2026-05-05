@@ -12,7 +12,7 @@
 
 <br/>
 
-[**↓ Download for Windows**](https://github.com/gopudas90/pausely/releases/latest/download/Pausely-Setup-1.2.0.exe) &nbsp;·&nbsp; [Releases](https://github.com/gopudas90/pausely/releases) &nbsp;·&nbsp; [Privacy](PRIVACY.md)
+[**↓ Download for Windows**](https://github.com/gopudas90/pausely/releases/latest/download/Pausely-Setup-1.2.1.exe) &nbsp;·&nbsp; [Releases](https://github.com/gopudas90/pausely/releases) &nbsp;·&nbsp; [Privacy](PRIVACY.md)
 
 </div>
 
@@ -92,6 +92,6 @@ MIT — see [LICENSE](LICENSE).
 
 <div align="center">
 
-<sub>made with <span style="color:#ff6b1a">♥</span> by <a href="https://www.gopu.work">Gopu</a></sub>
+<sub>made with <span style="color:#ff6b1a">♥</span> by <a href="https://www.linkedin.com/in/gopudas90/">Gopu</a></sub>
 
 </div>
